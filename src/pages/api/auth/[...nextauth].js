@@ -15,7 +15,7 @@ export default NextAuth({
         console.log("User found:", user);
 
         if (!user) {
-          user = addUser(profile.email, null);
+          user = addUser(profile.email);
           console.log("User created:", user);
         }
 
