@@ -39,7 +39,7 @@ export default NextAuth({
   ],
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: "/auth/loginPage",
+    signIn: "/auth/loginpage",
   },
   session: {
     jwt: true,
