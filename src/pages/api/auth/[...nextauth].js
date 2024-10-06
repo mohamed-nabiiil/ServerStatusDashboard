@@ -9,10 +9,16 @@ export default NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       async profile(profile) {
+        console.log("Google profile received:", profile);
+
         let user = findUser(profile.email);
+        console.log("User found:", user);
+
         if (!user) {
           user = addUser(profile.email, null);
+          console.log("User created:", user);
         }
+
         return {
           id: profile.sub,
           email: profile.email,
@@ -29,6 +35,8 @@ export default NextAuth({
       },
       async authorize(credentials) {
         const user = findUser(credentials.email, credentials.password);
+        console.log("Credentials user found:", user);
+
         if (user) {
           return user;
         } else {
@@ -46,17 +54,17 @@ export default NextAuth({
   },
   callbacks: {
     async redirect({ url, baseUrl }) {
+      console.log("Redirect URL:", url);
       if (url.startsWith(baseUrl)) {
         return url;
       }
       return baseUrl + "/dashboard";
     },
-
     async session({ session, token }) {
+      console.log("Session Token:", token);
       session.user.id = token.id;
       return session;
     },
-
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
