@@ -44,4 +44,22 @@ export default NextAuth({
   session: {
     jwt: true,
   },
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith(baseUrl)) {
+        return url;
+      }
+      return baseUrl + "/dashboard";
+    },
+    async session({ session, token }) {
+      session.user.id = token.id;
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+  },
 });
