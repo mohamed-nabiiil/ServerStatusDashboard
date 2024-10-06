@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleInputChange = (e) => {
@@ -13,14 +14,29 @@ const Login = () => {
     setCredentials((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple regex for email validation
+    return re.test(String(email).toLowerCase());
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
+
+    // Validate email before submission
+    if (!validateEmail(credentials.email)) {
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
+
+    setIsLoading(true); // Set loading state
 
     const result = await signIn("credentials", {
       redirect: false,
       ...credentials,
     });
+
+    setIsLoading(false); // Reset loading state
 
     if (result?.ok) {
       router.push("/dashboard");
@@ -29,8 +45,9 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = () =>
+  const handleGoogleLogin = () => {
     signIn("google", { callbackUrl: "/dashboard" });
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -50,14 +67,19 @@ const Login = () => {
           ))}
           <button
             type="submit"
-            className="w-full p-2 bg-green-500 text-white rounded"
+            className={`w-full p-2 ${
+              isLoading ? "bg-gray-500" : "bg-green-500"
+            } text-white rounded`}
+            disabled={isLoading} // Disable button during loading
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 
         {errorMessage && (
-          <p className="mt-4 text-red-500 text-center">{errorMessage}</p>
+          <p className="mt-4 text-red-500 text-center" aria-live="assertive">
+            {errorMessage}
+          </p>
         )}
 
         <p className="mt-4 text-center">Or login with:</p>

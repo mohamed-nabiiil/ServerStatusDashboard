@@ -9,7 +9,7 @@ export default NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       async profile(profile) {
-        let user = findUser(profile.email); // Function to find user by email
+        let user = findUser(profile.email);
         if (!user) {
           user = addUser(profile.email, null);
         }
@@ -51,10 +51,12 @@ export default NextAuth({
       }
       return baseUrl + "/dashboard";
     },
+
     async session({ session, token }) {
       session.user.id = token.id;
       return session;
     },
+
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -62,4 +64,5 @@ export default NextAuth({
       return token;
     },
   },
+  debug: true,
 });
