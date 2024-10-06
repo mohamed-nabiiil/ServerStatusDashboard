@@ -55,13 +55,13 @@ export default NextAuth({
   callbacks: {
     async redirect({ url, baseUrl }) {
       console.log("Redirect URL:", url);
+      console.log("Base URL:", baseUrl);
       if (url.startsWith(baseUrl)) {
         return url;
       }
-      return baseUrl + "/dashboard";
+      return `${baseUrl}/dashboard`;
     },
     async session({ session, token }) {
-      console.log("Session Token:", token);
       session.user.id = token.id;
       return session;
     },
@@ -71,6 +71,6 @@ export default NextAuth({
       }
       return token;
     },
+    debug: true,
   },
-  debug: true,
 });
