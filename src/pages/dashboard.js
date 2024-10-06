@@ -15,7 +15,7 @@ const Dashboard = () => {
     const checkSession = async () => {
       const session = await getSession();
       if (!session) {
-        router.push("/auth/loginPage");
+        router.push("/auth/loginpage");
       } else {
         setServers(mockServers);
         setLoading(false);
